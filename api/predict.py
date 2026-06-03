@@ -54,7 +54,7 @@ def home():
         "model_loaded": diabetes_model is not None
     }
 
-@app.post("/predict")
+@app.post("/api/predict")
 async def predict(data: DiabetesInput):
     if diabetes_model is None:
         raise HTTPException(status_code=500, detail="Machine Learning model is not loaded on the server.")
