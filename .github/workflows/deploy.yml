@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: Build and Test
 
 on:
   push:
@@ -6,26 +6,36 @@ on:
       - main
 
 jobs:
-  deploy:
+  test-backend:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set Up Python
+        uses: actions/setup-python@v5
         with:
-          node-version: 20
+          python-version: "3.11"
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
 
-      - name: Pull Vercel Environment Info
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Start FastAPI Server
+        run: |
+          uvicorn app:app --host 0.0.0.0 --port 8000 &
+          sleep 10
 
-      - name: Build Project
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Test API
+        run: |
+          curl http://127.0.0.1:8000
 
-      - name: Deploy to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Upload Frontend Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: website
+          path: |
+            index.html
+            styles.css
+            script.js
