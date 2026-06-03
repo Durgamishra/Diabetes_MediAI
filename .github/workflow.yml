@@ -1,0 +1,41 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Start FastAPI Server
+        run: |
+          uvicorn app:app --host 0.0.0.0 --port 8000 &
+          sleep 10
+
+      - name: Test API
+        run: |
+          curl http://127.0.0.1:8000
+
+      - name: Upload Frontend Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: website
+          path: |
+            index.html
+            styles.css
+            script.js
