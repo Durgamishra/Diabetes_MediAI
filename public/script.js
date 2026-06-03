@@ -44,7 +44,7 @@ particlesJS("particles-js", {
     retina_detect: true
 });
 
-// Scroll Reveal Animations
+// Scroll Reveal Animation
 function reveal() {
     const reveals = document.querySelectorAll(".reveal");
 
@@ -62,7 +62,7 @@ function reveal() {
 window.addEventListener("scroll", reveal);
 reveal();
 
-// Number Counter Animation
+// Counter Animation
 const counters = document.querySelectorAll(".counter");
 const speed = 200;
 
@@ -71,7 +71,6 @@ const animateCounters = () => {
         const updateCount = () => {
             const target = +counter.getAttribute("data-target");
             const count = +counter.innerText;
-
             const increment = target / speed;
 
             if (count < target) {
@@ -107,7 +106,7 @@ const formCard = document.querySelector(".form-card");
 const loadingState = document.getElementById("loadingState");
 const resultCard = document.getElementById("resultCard");
 
-// Prediction Form Submit
+// Form Submit
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -139,35 +138,24 @@ form.addEventListener("submit", async (e) => {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(
-                `HTTP ${response.status}: ${errorText}`
-            );
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
 
         const result = await response.json();
 
-        loadingState.classList.add("hidden");
-
-        if (result.outcome) {
-            showResult(result.outcome);
-        } else {
-            showResult("Error");
-        }
+        showResult(result.outcome);
 
     } catch (error) {
         console.error("API Error:", error);
-
-        loadingState.classList.add("hidden");
-
         showResult("Error");
+    } finally {
+        loadingState.classList.add("hidden");
     }
 });
 
-// Display Result
+// Show Result
 function showResult(outcome) {
-
     formCard.classList.add("hidden");
-    loadingState.classList.add("hidden");
 
     const resultIcon = document.getElementById("resultIcon");
     const resultTitle = document.getElementById("resultTitle");
@@ -186,7 +174,7 @@ function showResult(outcome) {
             "High Risk of Diabetes Detected";
 
         resultMessage.textContent =
-            "The AI model detected patterns associated with diabetes. Please consult a healthcare professional for proper medical evaluation.";
+            "The AI model detected patterns associated with diabetes. Please consult a healthcare professional for a complete medical evaluation.";
 
         resultTitle.style.color = "var(--red)";
 
@@ -201,7 +189,7 @@ function showResult(outcome) {
             "Low Risk of Diabetes Detected";
 
         resultMessage.textContent =
-            "The AI model did not detect significant indicators of diabetes. Continue maintaining healthy lifestyle habits.";
+            "The AI model did not detect significant indicators of diabetes. Continue maintaining a healthy lifestyle and regular health checkups.";
 
         resultTitle.style.color = "var(--green)";
 
@@ -224,16 +212,13 @@ function showResult(outcome) {
 
 // Reset Form
 function resetForm() {
-
     form.reset();
 
     resultCard.classList.add("hidden");
 
     formCard.classList.remove("hidden");
 
-    document
-        .getElementById("predict-section")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
+    document.getElementById("predict-section").scrollIntoView({
+        behavior: "smooth"
+    });
 }
