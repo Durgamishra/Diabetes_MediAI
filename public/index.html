@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Diabetes Risk Assessment | Premium Healthcare SaaS</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar glass">
+        <div class="logo">
+            <i class="fa-solid fa-dna pulse-icon"></i>
+            <span>MediAI.</span>
+        </div>
+        <a href="#predict-section" class="nav-btn">Start Assessment</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content reveal">
+            <div class="badge glass">
+                <i class="fa-solid fa-shield-heart"></i> AI Healthcare Verified
+            </div>
+            <h1>AI-Powered <span class="gradient-text">Diabetes Risk</span> Assessment</h1>
+            <p>Advanced Machine Learning model for early diabetes prediction and health risk analysis. Get real-time medical insights instantly.</p>
+            <div class="hero-actions">
+                <a href="#predict-section" class="btn btn-primary">
+                    Analyze Health Data <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="stats-section reveal">
+        <div class="stat-card glass">
+            <i class="fa-solid fa-bullseye stat-icon purple"></i>
+            <h3 class="counter" data-target="98.5">0</h3><span>%</span>
+            <p>Model Accuracy</p>
+        </div>
+        <div class="stat-card glass">
+            <i class="fa-solid fa-server stat-icon cyan"></i>
+            <h3 class="counter" data-target="15420">0</h3><span>+</span>
+            <p>Predictions Made</p>
+        </div>
+        <div class="stat-card glass">
+            <i class="fa-solid fa-bolt stat-icon green"></i>
+            <h3 class="counter" data-target="120">0</h3><span>ms</span>
+            <p>Avg Response Time</p>
+        </div>
+        <div class="stat-card glass">
+            <i class="fa-solid fa-heart-pulse stat-icon blue"></i>
+            <h3 class="counter" data-target="50">0</h3><span>+</span>
+            <p>Clinical Metrics</p>
+        </div>
+    </section>
+
+    <!-- Prediction Section -->
+    <section id="predict-section" class="prediction-section reveal">
+        <div class="section-header">
+            <h2>Medical <span class="gradient-text">Data Input</span></h2>
+            <p>Enter patient vitals to generate an AI risk assessment.</p>
+        </div>
+
+        <div class="prediction-container">
+            <!-- Input Form -->
+            <div class="form-card glass">
+                <form id="predictionForm">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <input type="number" id="pregnancies" required>
+                            <label>Pregnancies</label>
+                            <i class="fa-solid fa-person-pregnant input-icon"></i>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="glucose" required>
+                            <label>Glucose Level (mg/dL)</label>
+                            <i class="fa-solid fa-cubes-stacked input-icon"></i>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="bloodPressure" required>
+                            <label>Blood Pressure (mm Hg)</label>
+                            <i class="fa-solid fa-droplet input-icon"></i>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="skinThickness" required>
+                            <label>Skin Thickness (mm)</label>
+                            <i class="fa-solid fa-hand-dots input-icon"></i>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="insulin" required>
+                            <label>Insulin (IU/mL)</label>
+                            <i class="fa-solid fa-syringe input-icon"></i>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" step="0.1" id="bmi" required>
+                            <label>BMI</label>
+                            <i class="fa-solid fa-weight-scale input-icon"></i>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" step="0.001" id="diabetesPedigreeFunction" required>
+                            <label>Pedigree Function</label>
+                            <i class="fa-solid fa-sitemap input-icon"></i>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="age" required>
+                            <label>Age (Years)</label>
+                            <i class="fa-solid fa-calendar-days input-icon"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-predict" id="submitBtn">
+                        <span>Run AI Prediction</span>
+                        <i class="fa-solid fa-microchip"></i>
+                    </button>
+                </form>
+
+                <!-- Loading State (Hidden) -->
+                <div id="loadingState" class="loading-state hidden">
+                    <div class="scanner-container">
+                        <div class="brain-icon"><i class="fa-solid fa-brain"></i></div>
+                        <div class="scanner-line"></div>
+                    </div>
+                    <h3>Analyzing Medical Data...</h3>
+                    <p>Evaluating 8 clinical parameters through neural processing</p>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                </div>
+            </div>
+
+            <!-- Result Card (Hidden) -->
+            <div id="resultCard" class="result-card glass hidden">
+                <div class="result-content">
+                    <div id="resultIcon" class="result-icon"></div>
+                    <h2 id="resultTitle">Result Pending</h2>
+                    <p id="resultMessage">Please submit the form to see the AI assessment.</p>
+                    
+                    <div class="confidence-meter">
+                        <span>AI Confidence Score</span>
+                        <div class="meter-bg"><div class="meter-fill" style="width: 96%"></div></div>
+                        <span class="meter-text">96.4%</span>
+                    </div>
+
+                    <button class="btn btn-reset" onclick="resetForm()">
+                        <i class="fa-solid fa-rotate-right"></i> New Assessment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ML Pipeline Section -->
+    <section class="pipeline-section reveal">
+        <h2>Machine Learning <span class="gradient-text">Pipeline</span></h2>
+        <div class="pipeline-grid">
+            <div class="pipeline-step glass">
+                <div class="step-num">01</div>
+                <i class="fa-solid fa-database"></i>
+                <h3>Data Collection</h3>
+                <p>Clinical records securely aggregated.</p>
+            </div>
+            <div class="pipeline-step glass">
+                <div class="step-num">02</div>
+                <i class="fa-solid fa-filter"></i>
+                <h3>Preprocessing</h3>
+                <p>Outlier removal & data normalization.</p>
+            </div>
+            <div class="pipeline-step glass">
+                <div class="step-num">03</div>
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h3>Feature Engineering</h3>
+                <p>Extraction of key biological markers.</p>
+            </div>
+            <div class="pipeline-step glass">
+                <div class="step-num">04</div>
+                <i class="fa-solid fa-network-wired"></i>
+                <h3>Model Training</h3>
+                <p>Algorithms trained for high precision.</p>
+            </div>
+            <div class="pipeline-step glass">
+                <div class="step-num">05</div>
+                <i class="fa-solid fa-laptop-medical"></i>
+                <h3>Prediction</h3>
+                <p>Real-time scalable API inference.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="tech-section reveal">
+        <h2>Powered by <span class="gradient-text">Modern Tech</span></h2>
+        <div class="tech-grid">
+            <div class="tech-card glass"><i class="fa-brands fa-html5" style="color: #E34F26;"></i><span>HTML5 / CSS3</span></div>
+            <div class="tech-card glass"><i class="fa-brands fa-js" style="color: #F7DF1E;"></i><span>JavaScript</span></div>
+            <div class="tech-card glass"><i class="fa-solid fa-bolt" style="color: #06B6D4;"></i><span>FastAPI</span></div>
+            <div class="tech-card glass"><i class="fa-brands fa-python" style="color: #3776AB;"></i><span>Python</span></div>
+            <div class="tech-card glass"><i class="fa-solid fa-chart-pie" style="color: #F7931E;"></i><span>Scikit-Learn</span></div>
+            <div class="tech-card glass"><i class="fa-solid fa-table" style="color: #150458;"></i><span>Pandas</span></div>
+            <div class="tech-card glass"><i class="fa-brands fa-github" style="color: #ffffff;"></i><span>GitHub</span></div>
+            <div class="tech-card glass"><i class="fa-solid fa-cloud" style="color: #000000;"></i><span>Vercel / Render</span></div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
