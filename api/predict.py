@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Load model safely
-MODEL_PATH = "Diabetes_pred.sav"
+MODEL_PATH = os.path.join(os.path.dirname(__file__),'..',"Diabetes_pred.sav")
 diabetes_model = None
 
 if os.path.exists(MODEL_PATH):
@@ -54,7 +54,7 @@ def home():
         "model_loaded": diabetes_model is not None
     }
 
-@app.post("https://diabetes-medi-ai.vercel.app/predict")
+@app.post("/predict")
 async def predict(data: DiabetesInput):
     if diabetes_model is None:
         raise HTTPException(status_code=500, detail="Machine Learning model is not loaded on the server.")
