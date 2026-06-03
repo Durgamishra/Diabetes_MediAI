@@ -1,5 +1,8 @@
 fastapi
+mangum
 uvicorn
 numpy
 scikit-learn
 pydantic
+pandas
+pickle5
