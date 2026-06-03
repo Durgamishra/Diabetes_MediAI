@@ -5,4 +5,4 @@ numpy
 scikit-learn
 pydantic
 pandas
-pickle5
+pickle
