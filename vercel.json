@@ -2,18 +2,21 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/app.py",
+      "src": "api/predict.py",
       "use": "@vercel/python"
+      "config":{
+        ["Diabetes_pred.sav"]
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "api/app.py"
+      "src": "/api/predict",
+      "dest": "api/predict.py"
     },
 
     {
-      "src": "/(.*\\.(css|js|png|jpg|jpeg|svg|ico|woff|woff2|ttf))",
+      "src": "/(.*\\.(css | js | html | ico | png | jpg | svg ))",
       "dest": "/$1"
     },
 
