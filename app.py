@@ -14,12 +14,13 @@ app = FastAPI(
 # Enable CORS for frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://diabetes-medi-ai.vercel.app/"]# Adjust this in production to your frontend URL
+    allow_origins=[
+        "https://diabetes-medi-ai.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # Load model safely
 MODEL_PATH = "Diabetes_pred.sav"
 diabetes_model = None
