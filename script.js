@@ -92,11 +92,14 @@ form.addEventListener("submit", async (e) => {
 
     try {
         // 3. Make API Call
-        const response = await fetch("http://127.0.0.1:8000/predict", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
+        const API_URL = "https://diabetes-medi-ai.vercel.app/predict";
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+                "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+});
 
         const result = await response.json();
         
