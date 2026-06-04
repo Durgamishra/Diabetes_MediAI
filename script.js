@@ -73,7 +73,7 @@ const submitBtn   = document.getElementById("submitBtn");
 // ─────────────────────────────────────────────
 //  API base URL — same Vercel project, use relative
 // ─────────────────────────────────────────────
-const API_URL = "/api/index";
+const API_URL = "https://diabetes-medi-ai.vercel.app/api/predict";
 
 // ─────────────────────────────────────────────
 //  Form Submit
