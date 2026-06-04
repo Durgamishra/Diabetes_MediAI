@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import pickle
+import joblib
 import numpy as np
 import os
 
@@ -40,7 +40,7 @@ scaler = None
 
 try:
     with open(MODEL_PATH, "rb") as f:
-        diabetes_model = pickle.load(f)
+        diabetes_model = joblib.load(f)
     print(f"✅ Model loaded: {MODEL_PATH}")
 except FileNotFoundError:
     print(f"⚠️  Model not found: {MODEL_PATH}")
@@ -49,7 +49,7 @@ except Exception as e:
 
 try:
     with open(SCALER_PATH, "rb") as f:
-        scaler = pickle.load(f)
+        scaler = joblib.load(f)
     print(f"✅ Scaler loaded: {SCALER_PATH}")
 except FileNotFoundError:
     print(f"⚠️  Scaler not found: {SCALER_PATH}")
