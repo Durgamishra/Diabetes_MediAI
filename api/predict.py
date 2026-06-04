@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Load model safely
-MODEL_PATH = os.path.join(os.path.dirname(__file__),'..',"Diabetes_pred.sav")
+MODEL_PATH = "Diabetes_pred.sav"
 diabetes_model = None
 
 if os.path.exists(MODEL_PATH):
@@ -31,10 +31,13 @@ if os.path.exists(MODEL_PATH):
 else:
     print(f"Warning: Model file '{MODEL_PATH}' not found. Prediction endpoint will fail.")
 
-# Uncomment if a scaler is required:
-# SCALER_PATH = "scaler.sav"
-# if os.path.exists(SCALER_PATH):
-#     scaler = pickle.load(open(SCALER_PATH, "rb"))
+SCALER_PATH = "scaler.sav"
+scaler = None
+if os.path.exists(SCALER_PATH):
+    with open(SCALER_PATH, "rb") as file:
+        scaler = pickle.load(file)
+else:
+    print(f"Warning: Scaler file '{SCALER_PATH}' not found. Predictions will proceed without scaling.")
 
 class DiabetesInput(BaseModel):
     pregnancies: int
@@ -53,15 +56,13 @@ def home():
         "message": "Premium AI Diabetes Prediction System Running",
         "model_loaded": diabetes_model is not None
     }
-
 @app.post("/api/predict")
 async def predict(data: DiabetesInput):
     if diabetes_model is None:
-        raise HTTPException(status_code=500, detail="Machine Learning model is not loaded on the server.")
+        raise HTTPException(status_code=500, detail="Model not loaded")
 
     try:
-        # Format input data
-        input_data = np.array([[
+        input_data = np.array([[ 
             data.pregnancies,
             data.glucose,
             data.blood_pressure,
@@ -70,18 +71,28 @@ async def predict(data: DiabetesInput):
             data.bmi,
             data.diabetes_pedigree_function,
             data.age
-        ]])
+        ]], dtype=float)
 
-        # If scaler used:
-        # input_data = scaler.transform(input_data)
+        print("RAW INPUT:", input_data)
 
-        # Generate Prediction
-        prediction = diabetes_model.predict(input_data)
+        # Apply scaler if available
+        if scaler is not None:
+            input_data = scaler.transform(input_data)
 
-        # Output resolution
-        result = "Diabetic" if prediction[0] == 1 else "Not Diabetic"
+        if hasattr(diabetes_model, "predict_proba"):
+            proba = diabetes_model.predict_proba(input_data)[0][1]
+            proba = float(proba)  # IMPORTANT FIX
 
-        return {"outcome": result}
+            threshold = 0.4
+            result = "Diabetic" if proba >= threshold else "Not Diabetic"
+        else:
+            pred = diabetes_model.predict(input_data)
+            result = "Diabetic" if int(pred[0]) == 1 else "Not Diabetic"
+            proba = None
+        return {
+            "outcome": result,
+            "risk_score": proba
+        }
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Prediction Error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
