@@ -25,11 +25,9 @@ app.add_middleware(
 # ──────────────────────────────────────────────
 #  Resolve paths — api/index.py → project root
 # ──────────────────────────────────────────────
-# Change these two lines:
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /api/
 
-MODEL_PATH  = os.path.join(BASE_DIR, "Diabetes_pred.sav")
-SCALER_PATH = os.path.join(BASE_DIR, "scaler.sav")
+MODEL_PATH  = "Diabetes_pred.sav"
+SCALER_PATH = "scaler.sav"
 
 # Remove ROOT_DIR completely — not needed anymore
 # ──────────────────────────────────────────────
