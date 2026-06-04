@@ -1,60 +1,90 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import joblib
 import numpy as np
+import joblib
 import os
+import traceback
 
-# ──────────────────────────────────────────────
-#  App setup
-# ──────────────────────────────────────────────
+# --------------------------------------------------
+# FastAPI App
+# --------------------------------------------------
+
 app = FastAPI(
     title="AI Diabetes Prediction API",
-    description="Machine Learning REST API for predicting diabetes risk.",
-    version="1.0.0",
+    description="Machine Learning REST API for Diabetes Prediction",
+    version="1.0.0"
 )
+
+# --------------------------------------------------
+# CORS
+# --------------------------------------------------
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://diabetes-medi-ai.vercel.app/"],
+    allow_origins=[
+        "https://diabetes-medi-ai.vercel.app",
+        "http://localhost:3000",
+        "http://127.0.0.1:5500",
+        "*"
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ──────────────────────────────────────────────
-#  Resolve paths — api/index.py → project root
-# ──────────────────────────────────────────────
+# --------------------------------------------------
+# Paths
+# --------------------------------------------------
 
-import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH  = os.path.join(BASE_DIR, "Diabetes_pred.sav")
+MODEL_PATH = os.path.join(BASE_DIR, "Diabetes_pred.sav")
 SCALER_PATH = os.path.join(BASE_DIR, "scaler.sav")
 
-# Remove ROOT_DIR completely — not needed anymore
-# ──────────────────────────────────────────────
-#  Load model & scaler once at cold start
-# ──────────────────────────────────────────────
+# --------------------------------------------------
+# Load Model & Scaler
+# --------------------------------------------------
+
 diabetes_model = None
 scaler = None
-try:
-    diabetes_model = joblib.load(MODEL_PATH)
-    print(f"✅ Model loaded: {MODEL_PATH}")
-except FileNotFoundError:
-    print(f"⚠️  Model not found: {MODEL_PATH}")
-except Exception as e:
-    print(f"❌ Model load error: {e}")
+model_error = None
+scaler_error = None
 
 try:
-    scaler = joblib.load(SCALER_PATH)
-    print(f"✅ Scaler loaded: {SCALER_PATH}")
-except FileNotFoundError:
-    print(f"⚠️  Scaler not found: {SCALER_PATH}")
+    print(f"Loading model from: {MODEL_PATH}")
+
+    if os.path.exists(MODEL_PATH):
+        diabetes_model = joblib.load(MODEL_PATH)
+        print("✅ Model loaded successfully")
+    else:
+        model_error = f"File not found: {MODEL_PATH}"
+        print(model_error)
+
 except Exception as e:
-    print(f"❌ Scaler load error: {e}")
-# ──────────────────────────────────────────────
-#  Request schema
-# ──────────────────────────────────────────────
+    model_error = str(e)
+    print("❌ Model loading failed:")
+    print(traceback.format_exc())
+
+try:
+    print(f"Loading scaler from: {SCALER_PATH}")
+
+    if os.path.exists(SCALER_PATH):
+        scaler = joblib.load(SCALER_PATH)
+        print("✅ Scaler loaded successfully")
+    else:
+        scaler_error = f"File not found: {SCALER_PATH}"
+        print(scaler_error)
+
+except Exception as e:
+    scaler_error = str(e)
+    print("❌ Scaler loading failed:")
+    print(traceback.format_exc())
+
+# --------------------------------------------------
+# Request Model
+# --------------------------------------------------
+
 class DiabetesInput(BaseModel):
     pregnancies: int
     glucose: float
@@ -65,60 +95,56 @@ class DiabetesInput(BaseModel):
     diabetes_pedigree_function: float
     age: int
 
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "pregnancies": 2,
-                "glucose": 120.0,
-                "blood_pressure": 70.0,
-                "skin_thickness": 20.0,
-                "insulin": 80.0,
-                "bmi": 28.5,
-                "diabetes_pedigree_function": 0.45,
-                "age": 33,
-            }
-        }
-    }
+# --------------------------------------------------
+# Routes
+# --------------------------------------------------
 
-# ──────────────────────────────────────────────
-#  Routes
-# ──────────────────────────────────────────────
 @app.get("/")
-def home():
+def root():
     return {
         "status": "online",
-        "message": "AI Diabetes Prediction API is running",
         "model_loaded": diabetes_model is not None,
-        "scaler_loaded": scaler is not None,
+        "scaler_loaded": scaler is not None
     }
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy",
+        "model_loaded": diabetes_model is not None,
+        "scaler_loaded": scaler is not None
+    }
+
+
 @app.get("/debug")
 def debug():
     return {
-        "cwd": os.getcwd(),
-        "file": __file__,
+        "current_directory": os.getcwd(),
+        "base_dir": BASE_DIR,
         "model_path": MODEL_PATH,
         "model_exists": os.path.exists(MODEL_PATH),
         "scaler_path": SCALER_PATH,
         "scaler_exists": os.path.exists(SCALER_PATH),
+        "model_loaded": diabetes_model is not None,
+        "scaler_loaded": scaler is not None,
+        "model_error": model_error,
+        "scaler_error": scaler_error
     }
 
-@app.get("/health")
-def health():
-    if diabetes_model is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
-    return {"status": "healthy"}
 
-
-@app.post("/api/index")
+@app.post("/api/predict")
 async def predict(data: DiabetesInput):
+
     if diabetes_model is None:
         raise HTTPException(
             status_code=503,
-            detail="Model not loaded. Ensure 'Diabetes_pred.sav' is committed to the repo root.",
+            detail=f"Model not loaded. Error: {model_error}"
         )
 
     try:
-        input_array = np.array([[
+
+        features = np.array([[
             data.pregnancies,
             data.glucose,
             data.blood_pressure,
@@ -126,26 +152,29 @@ async def predict(data: DiabetesInput):
             data.insulin,
             data.bmi,
             data.diabetes_pedigree_function,
-            data.age,
-        ]], dtype=float)
+            data.age
+        ]])
 
-        processed = scaler.transform(input_array) if scaler is not None else input_array
+        if scaler is not None:
+            features = scaler.transform(features)
+
+        prediction = int(diabetes_model.predict(features)[0])
+
+        probability = None
 
         if hasattr(diabetes_model, "predict_proba"):
-            proba = float(diabetes_model.predict_proba(processed)[0][1])
-            outcome = "Diabetic" if proba >= 0.4 else "Not Diabetic"
-        else:
-            prediction = int(diabetes_model.predict(processed)[0])
-            outcome = "Diabetic" if prediction == 1 else "Not Diabetic"
-            proba = None
+            probability = float(
+                diabetes_model.predict_proba(features)[0][1]
+            )
 
         return {
-            "outcome": outcome,
-            "risk_score": round(proba, 4) if proba is not None else None,
-            "threshold_used": 0.4,
+            "prediction": prediction,
+            "outcome": "Diabetic" if prediction == 1 else "Not Diabetic",
+            "risk_score": round(probability, 4) if probability is not None else None
         }
 
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=f"Invalid input: {e}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Prediction failed: {str(e)}"
+        )
