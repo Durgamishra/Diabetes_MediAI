@@ -28,8 +28,8 @@ app.add_middleware(
 import os
 
 BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH  = os.path.join(BASE_DIR, "/api/Diabetes_pred.sav")
-SCALER_PATH = os.path.join(BASE_DIR, "/api/scaler.sav")
+MODEL_PATH  = os.path.join(BASE_DIR, "Diabetes_pred.sav")
+SCALER_PATH = os.path.join(BASE_DIR, "scaler.sav")
 
 # Remove ROOT_DIR completely — not needed anymore
 # ──────────────────────────────────────────────
