@@ -37,10 +37,8 @@ SCALER_PATH = os.path.join(BASE_DIR, "scaler.sav")
 # ──────────────────────────────────────────────
 diabetes_model = None
 scaler = None
-
 try:
-    with open(MODEL_PATH, "rb") as f:
-        diabetes_model = joblib.load(f)
+    diabetes_model = joblib.load(MODEL_PATH)
     print(f"✅ Model loaded: {MODEL_PATH}")
 except FileNotFoundError:
     print(f"⚠️  Model not found: {MODEL_PATH}")
@@ -48,14 +46,12 @@ except Exception as e:
     print(f"❌ Model load error: {e}")
 
 try:
-    with open(SCALER_PATH, "rb") as f:
-        scaler = joblib.load(f)
+    scaler = joblib.load(SCALER_PATH)
     print(f"✅ Scaler loaded: {SCALER_PATH}")
 except FileNotFoundError:
     print(f"⚠️  Scaler not found: {SCALER_PATH}")
 except Exception as e:
     print(f"❌ Scaler load error: {e}")
-
 # ──────────────────────────────────────────────
 #  Request schema
 # ──────────────────────────────────────────────
