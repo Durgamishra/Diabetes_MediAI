@@ -73,7 +73,7 @@ const submitBtn   = document.getElementById("submitBtn");
 // ─────────────────────────────────────────────
 //  API base URL — same Vercel project, use relative
 // ─────────────────────────────────────────────
-const API_URL = "/api/predict";
+const API_URL = "/api/index";
 
 // ─────────────────────────────────────────────
 //  Form Submit
