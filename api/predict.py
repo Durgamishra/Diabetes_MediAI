@@ -16,7 +16,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Same Vercel project = same origin; wildcard safe here
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,8 +25,8 @@ app.add_middleware(
 # ──────────────────────────────────────────────
 #  Resolve paths — api/index.py → project root
 # ──────────────────────────────────────────────
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # /project/api
-ROOT_DIR = os.path.dirname(BASE_DIR)                    # /project
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
 
 MODEL_PATH  = os.path.join(ROOT_DIR, "Diabetes_pred.sav")
 SCALER_PATH = os.path.join(ROOT_DIR, "scaler.sav")
@@ -34,8 +34,8 @@ SCALER_PATH = os.path.join(ROOT_DIR, "scaler.sav")
 # ──────────────────────────────────────────────
 #  Load model & scaler once at cold start
 # ──────────────────────────────────────────────
-diabetes_model = pickle.load(open(MODEL_PATH, 'rb'))
-scaler = pickle.load(open(SCALER_PATH, 'rb'))
+diabetes_model = None
+scaler = None
 
 try:
     with open(MODEL_PATH, "rb") as f:
