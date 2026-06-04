@@ -25,12 +25,13 @@ app.add_middleware(
 # ──────────────────────────────────────────────
 #  Resolve paths — api/index.py → project root
 # ──────────────────────────────────────────────
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(BASE_DIR)
+# Change these two lines:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /api/
 
-MODEL_PATH  = os.path.join(ROOT_DIR, "Diabetes_pred.sav")
-SCALER_PATH = os.path.join(ROOT_DIR, "scaler.sav")
+MODEL_PATH  = os.path.join(BASE_DIR, "Diabetes_pred.sav")
+SCALER_PATH = os.path.join(BASE_DIR, "scaler.sav")
 
+# Remove ROOT_DIR completely — not needed anymore
 # ──────────────────────────────────────────────
 #  Load model & scaler once at cold start
 # ──────────────────────────────────────────────
