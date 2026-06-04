@@ -34,8 +34,8 @@ SCALER_PATH = os.path.join(ROOT_DIR, "scaler.sav")
 # ──────────────────────────────────────────────
 #  Load model & scaler once at cold start
 # ──────────────────────────────────────────────
-diabetes_model = None
-scaler = None
+diabetes_model = pickle.load(open(MODEL_PATH, 'rb'))
+scaler = pickle.load(open(SCALER_PATH, 'rb'))
 
 try:
     with open(MODEL_PATH, "rb") as f:
