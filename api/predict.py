@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Load model safely
-MODEL_PATH = "Diabetes_pred.sav"
+MODEL_PATH = os.path.join(os.path.dirname(__file__),'..',"Diabetes_pred.sav")
 diabetes_model = None
 
 if os.path.exists(MODEL_PATH):
@@ -31,7 +31,11 @@ if os.path.exists(MODEL_PATH):
 else:
     print(f"Warning: Model file '{MODEL_PATH}' not found. Prediction endpoint will fail.")
 
-SCALER_PATH = "scaler.sav"
+SCALER_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "scaler.sav"
+)
 scaler = None
 if os.path.exists(SCALER_PATH):
     with open(SCALER_PATH, "rb") as file:
