@@ -91,7 +91,16 @@ def home():
         "model_loaded": diabetes_model is not None,
         "scaler_loaded": scaler is not None,
     }
-
+@app.get("/debug")
+def debug():
+    return {
+        "cwd": os.getcwd(),
+        "file": __file__,
+        "model_path": MODEL_PATH,
+        "model_exists": os.path.exists(MODEL_PATH),
+        "scaler_path": SCALER_PATH,
+        "scaler_exists": os.path.exists(SCALER_PATH),
+    }
 
 @app.get("/health")
 def health():
