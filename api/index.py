@@ -109,7 +109,7 @@ def health():
     return {"status": "healthy"}
 
 
-@app.post("/api/predict")
+@app.post("/api/index")
 async def predict(data: DiabetesInput):
     if diabetes_model is None:
         raise HTTPException(
